@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { motion, useAnimation } from 'framer-motion';
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
 import Button from '../common/Button';
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
 
 const HeroWrapper = styled.section`
   height: 100vh;
@@ -151,7 +151,7 @@ const Hero = () => {
                   default: "bounce",
                 },
                 random: false,
-                speed: 3,
+                speed: 6,
                 straight: false,
               },
               number: {

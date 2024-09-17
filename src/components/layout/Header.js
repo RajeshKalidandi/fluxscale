@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSun, FaMoon } from 'react-icons/fa';
+import { FaSun, FaMoon, FaBars, FaTimes } from 'react-icons/fa';
 
 const HeaderWrapper = styled(motion.header)`
   position: fixed;
@@ -16,18 +16,17 @@ const HeaderWrapper = styled(motion.header)`
   transition: all 0.3s ease;
 `;
 
-const Nav = styled.nav`
+const HeaderContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
 `;
 
 const Logo = styled(Link)`
-  font-family: ${props => props.theme.fonts.heading};
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: bold;
   color: ${props => props.theme.colors.primary};
   text-decoration: none;
   transition: color 0.3s ease;
@@ -37,115 +36,134 @@ const Logo = styled(Link)`
   }
 `;
 
-const NavLinks = styled.ul`
+const NavItems = styled.nav`
   display: flex;
-  list-style: none;
   align-items: center;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
-const NavItem = styled.li`
+const NavItem = styled(motion.div)`
   margin-left: 2rem;
 `;
 
 const NavLink = styled(Link)`
-  font-family: ${props => props.theme.fonts.body};
   color: ${props => props.theme.colors.text};
   text-decoration: none;
-  transition: color 0.3s ease;
   font-weight: 500;
+  transition: color 0.3s ease;
+
+  &:hover, &.active {
+    color: ${props => props.theme.colors.primary};
+  }
+`;
+
+const ToggleButton = styled.button`
+  background-color: transparent;
+  border: none;
+  color: ${props => props.theme.colors.text};
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
 
   &:hover {
     color: ${props => props.theme.colors.primary};
   }
 `;
 
-const ToggleButton = styled.button`
-  background-color: ${props => props.theme.colors.primary};
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px;
-  width: 60px;
-  height: 30px;
-  position: relative;
-  transition: background-color 0.3s ease;
+const MobileMenuButton = styled(ToggleButton)`
+  display: none;
 
-  &:focus {
-    outline: none;
+  @media (max-width: 768px) {
+    display: block;
   }
 `;
 
-const ToggleThumb = styled(motion.div)`
-  width: 22px;
-  height: 22px;
-  background-color: white;
-  border-radius: 50%;
-  position: absolute;
+const MobileMenu = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 300px;
+  background-color: ${props => props.theme.colors.background};
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-  height: 100%;
-  color: ${props => props.theme.colors.background};
-  z-index: 1;
+const MobileNavItem = styled(motion.div)`
+  margin-bottom: 1.5rem;
 `;
 
 const Header = ({ isDark, toggleDarkMode }) => {
-  const [scrolled, setScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    setIsMobileMenuOpen(false);
+  }, [location]);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const navItems = [
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Contact', path: '/contact' },
+    { name: 'Login', path: '/login' },
+  ];
 
   return (
     <HeaderWrapper
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      style={{
-        backgroundColor: scrolled ? (isDark ? 'rgba(26,26,26,0.9)' : 'rgba(255,255,255,0.9)') : 'transparent',
-        backdropFilter: scrolled ? 'blur(10px)' : 'none',
-      }}
     >
-      <Nav>
+      <HeaderContainer>
         <Logo to="/">FluxScale</Logo>
-        <NavLinks>
-          <NavItem><NavLink to="/">Home</NavLink></NavItem>
-          <NavItem><NavLink to="/about">About</NavLink></NavItem>
-          <NavItem><NavLink to="/contact">Contact</NavLink></NavItem>
-          <NavItem><NavLink to="/blog">Blog</NavLink></NavItem>
+        <NavItems>
+          {navItems.map((item) => (
+            <NavItem key={item.name}>
+              <NavLink to={item.path} className={location.pathname === item.path ? 'active' : ''}>
+                {item.name}
+              </NavLink>
+            </NavItem>
+          ))}
           <NavItem>
             <ToggleButton onClick={toggleDarkMode}>
-              <AnimatePresence mode="wait" initial={false}>
-                <ToggleThumb
-                  key={isDark ? 'dark' : 'light'}
-                  initial={{ x: isDark ? 30 : 0 }}
-                  animate={{ x: isDark ? 30 : 0 }}
-                  exit={{ x: isDark ? 0 : 30 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-              </AnimatePresence>
-              <IconWrapper>
-                <FaSun />
-              </IconWrapper>
-              <IconWrapper>
-                <FaMoon />
-              </IconWrapper>
+              {isDark ? <FaSun /> : <FaMoon />}
             </ToggleButton>
           </NavItem>
-        </NavLinks>
-      </Nav>
+        </NavItems>
+        <MobileMenuButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </MobileMenuButton>
+      </HeaderContainer>
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <MobileMenu
+            initial={{ x: 300 }}
+            animate={{ x: 0 }}
+            exit={{ x: 300 }}
+            transition={{ type: 'tween' }}
+          >
+            {navItems.map((item) => (
+              <MobileNavItem key={item.name}>
+                <NavLink to={item.path} className={location.pathname === item.path ? 'active' : ''}>
+                  {item.name}
+                </NavLink>
+              </MobileNavItem>
+            ))}
+            <MobileNavItem>
+              <ToggleButton onClick={toggleDarkMode}>
+                {isDark ? <FaSun /> : <FaMoon />}
+              </ToggleButton>
+            </MobileNavItem>
+          </MobileMenu>
+        )}
+      </AnimatePresence>
     </HeaderWrapper>
   );
 };

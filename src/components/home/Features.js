@@ -2,71 +2,84 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { FaRobot, FaChartLine, FaCogs, FaUserFriends } from 'react-icons/fa';
 
-const FeaturesWrapper = styled.section`
-  padding: 4rem 0;
+const FeaturesSection = styled.section`
+  padding: 100px 0;
   background-color: ${props => props.theme.colors.background};
 `;
 
+const FeaturesContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+`;
+
 const FeaturesTitle = styled(motion.h2)`
-  font-size: 2.5rem;
   text-align: center;
-  margin-bottom: 3rem;
+  font-size: 2.5rem;
+  margin-bottom: 50px;
   color: ${props => props.theme.colors.primary};
 `;
 
-const FeaturesGrid = styled(motion.div)`
+const FeaturesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  padding: 0 5%;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
 `;
 
 const FeatureCard = styled(motion.div)`
   background-color: ${props => props.theme.colors.cardBackground};
   border-radius: 10px;
-  padding: 2rem;
+  padding: 30px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
 
 const FeatureIcon = styled.div`
   font-size: 3rem;
-  margin-bottom: 1rem;
+  color: ${props => props.theme.colors.primary};
+  margin-bottom: 20px;
 `;
 
 const FeatureTitle = styled.h3`
   font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: ${props => props.theme.colors.primary};
+  margin-bottom: 15px;
+  color: ${props => props.theme.colors.text};
 `;
 
 const FeatureDescription = styled.p`
   font-size: 1rem;
   color: ${props => props.theme.colors.text};
+  opacity: 0.8;
 `;
 
-const featureData = [
+const features = [
   {
-    title: 'AI-Powered Automation',
-    description: 'Leverage cutting-edge AI to automate your engagement processes.',
-    icon: '🤖',
+    icon: <FaRobot />,
+    title: "AI-Powered Automation",
+    description: "Leverage cutting-edge AI to automate your engagement processes and save time."
   },
   {
-    title: 'Real-time Analytics',
-    description: 'Get instant insights with our powerful analytics dashboard.',
-    icon: '📊',
+    icon: <FaChartLine />,
+    title: "Advanced Analytics",
+    description: "Gain deep insights into your engagement metrics with our powerful analytics tools."
   },
   {
-    title: 'Seamless Integration',
-    description: 'Easily integrate with your existing tools and workflows.',
-    icon: '🔗',
+    icon: <FaCogs />,
+    title: "Customizable Workflows",
+    description: "Create and optimize engagement workflows tailored to your specific needs."
   },
+  {
+    icon: <FaUserFriends />,
+    title: "Multi-Channel Support",
+    description: "Engage with your audience across various platforms and channels seamlessly."
+  }
 ];
 
 const Features = () => {
@@ -90,32 +103,41 @@ const Features = () => {
     visible: {
       y: 0,
       opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100,
+      },
     },
   };
 
   return (
-    <FeaturesWrapper ref={ref}>
-      <FeaturesTitle
-        initial={{ opacity: 0, y: -20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5 }}
-      >
-        Our Features
-      </FeaturesTitle>
-      <FeaturesGrid
-        variants={containerVariants}
-        initial="hidden"
-        animate={inView ? "visible" : "hidden"}
-      >
-        {featureData.map((feature, index) => (
-          <FeatureCard key={index} variants={itemVariants}>
-            <FeatureIcon>{feature.icon}</FeatureIcon>
-            <FeatureTitle>{feature.title}</FeatureTitle>
-            <FeatureDescription>{feature.description}</FeatureDescription>
-          </FeatureCard>
-        ))}
-      </FeaturesGrid>
-    </FeaturesWrapper>
+    <FeaturesSection>
+      <FeaturesContainer>
+        <FeaturesTitle
+          initial={{ opacity: 0, y: -20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+        >
+          Our Powerful Features
+        </FeaturesTitle>
+        <FeaturesGrid
+          as={motion.div}
+          ref={ref}
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+        >
+          {features.map((feature, index) => (
+            <FeatureCard key={index} variants={itemVariants}>
+              <FeatureIcon>{feature.icon}</FeatureIcon>
+              <FeatureTitle>{feature.title}</FeatureTitle>
+              <FeatureDescription>{feature.description}</FeatureDescription>
+            </FeatureCard>
+          ))}
+        </FeaturesGrid>
+      </FeaturesContainer>
+    </FeaturesSection>
   );
 };
 
